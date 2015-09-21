@@ -1,0 +1,41 @@
+<script type="text/javascript">
+  $(document).ready(function(){
+
+    if ( $('#inc_id').length > 0 && $('#inc_id').val() > 0 ){
+      window.location.href = '/incidents/'+ $('#inc_id').val() +'/send_new_incident.pdf';
+    }
+
+  });  
+</script>
+<%= hidden_field_tag 'active_class', 'all_projects'%>
+<% if @projects.present? %>  
+  <table class="table table-bordered table-striped table-condensed">
+    <thead>
+      <th>Name</th>
+      <th>Contact Info</th>
+      <th>Address</th>
+      <th>Action</th>
+    </thead>  
+    <tbody>
+      <% @projects.each do |project|%>
+        <tr>
+          <td><%= project.name %></td>
+          <td><%= project.contact_info %></td>
+          <td><%= project.address %></td>
+          <td>
+            <%= link_to "show", project_path(project), class: "btn btn-default btn-sm" %>
+            <%= link_to "download detail report", detail_report_project_path(project, { format: :pdf}), class: "btn btn-sm btn-info" %>
+            <%= link_to "send incident", new_project_incident_path(project), class: "btn btn-sm btn-primary" %>
+            <%= link_to "view its incidents", project_incidents_path(project), class: "btn btn-sm btn-success" %>
+            <%= link_to 'Destroy', project, data: { confirm: 'Are you sure?' }, method: :delete, class: "btn btn-sm btn-danger" %>
+            </td>
+        </tr>
+      <% end %>   
+    </tbody>  
+  </table> 
+  <% if params[:inc].present? && Incident.find(params[:inc]).present? && Incident.find(params[:inc]).downloaded.blank? %>
+    <%= hidden_field_tag :inc_id, params[:inc] %>
+  <% end %>
+<% else %>
+  <b>No Project Present</b>
+<% end %>   
